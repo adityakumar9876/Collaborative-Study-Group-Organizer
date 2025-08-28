@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySync - Collaborative Group Study</title>
+    <script src="mainscript.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #7e6cca;
+            --primary-dark: #6a5bb5;
+            --secondary: #ff6b6b;
+            --dark: #2c2c54;
+            --darker: #1e1e3f;
+            --light: #f7f7ff;
+            --success: #4ecdc4;
+            --warning: #ffd166;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: rgba(30, 30, 63, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--light);
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--light);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(126, 108, 202, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--light);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #a9a9c9;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: rgba(42, 42, 84, 0.6);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+
+        .feature-card p {
+            color: #a9a9c9;
+            line-height: 1.6;
+        }
+
+        .study-groups {
+            margin: 4rem 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--light);
+        }
+
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .group-card {
+            background: rgba(42, 42, 84, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .group-header {
+            padding: 1.5rem;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .group-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--darker);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .group-info h3 {
+            font-size: 1.2rem;
+        }
+
+        .group-info p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .group-details {
+            padding: 1.5rem;
+        }
+
+        .members {
+            display: flex;
+            margin: 1rem 0;
+        }
+
+        .member {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-right: -10px;
+            border: 2px solid var(--darker);
+        }
+
+        .group-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            color: #a9a9c9;
+            font-size: 0.9rem;
+        }
+
+        .join-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--light);
+            border-radius: 8px;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .join-btn:hover {
+            background: var(--primary);
+        }
+
+        footer {
+            background: var(--darker);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #a9a9c9;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            color: #a9a9c9;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animation for feature cards */
+        .feature-card {
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        .feature-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .feature-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .feature-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Join button effect */
+        .join-btn:active {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .join-btn:active::after {
+            content: " Request Sent ✓";
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                margin: 1rem 0;
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .user-actions {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+            <span>StudySync</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Groups</a></li>
+                <li><a href="#">Schedule</a></li>
+                <li><a href="#">Resources</a></li>
+                <li><a href="#">Messages</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <button class="btn btn-secondary">Log In</button>
+            <button class="btn btn-primary">Sign Up</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Collaborate. Learn. Succeed.</h1>
+            <p>StudySync is the perfect platform to organize group studies, share resources, and achieve academic goals together.</p>
+            <button class="btn btn-primary">Create Study Group</button>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Group Collaboration</h3>
+                <p>Create study groups, invite members, and work together in real-time on shared materials and notes.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3>Smart Scheduling</h3>
+                <p>Coordinate study sessions with smart scheduling that finds the perfect time for all group members.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Resource Sharing</h3>
+                <p>Share notes, documents, and resources seamlessly with your study group members.</p>
+            </div>
+        </section>
+
+        <section class="study-groups">
+            <h2 class="section-title">Active Study Groups</h2>
+            <div class="groups-grid">
+                <div class="group-card">
+                    <div class="group-header">
+                        <div class="group-avatar">CS</div>
+                        <div class="group-info">
+                            <h3>Computer Science</h3>
+                            <p>12 members</p>
+                        </div>
+                    </div>
+                    <div class="group-details">
+                        <p>Studying algorithms and data structures for upcoming exams.</p>
+                        <div class="members">
+                            <div class="member">JD</div>
+                            <div class="member">AM</div>
+                            <div class="member">SK</div>
+                            <div class="member">+9</div>
+                        </div>
+                        <div class="group-stats">
+                            <span><i class="fas fa-file-alt"></i> 24 resources</span>
+                            <span><i class="fas fa-comments"></i> 86 messages</span>
+                        </div>
+                        <button class="join-btn">Join Group</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-header">
+                        <div class="group-avatar">MX</div>
+                        <div class="group-info">
+                            <h3>Calculus</h3>
+                            <p>8 members</p>
+                        </div>
+                    </div>
+                    <div class="group-details">
+                        <p>Mastering calculus concepts and practice problems together.</p>
+                        <div class="members">
+                            <div class="member">TP</div>
+                            <div class="member">RJ</div>
+                            <div class="member">LH</div>
+                            <div class="member">+5</div>
+                        </div>
+                        <div class="group-stats">
+                            <span><i class="fas fa-file-alt"></i> 18 resources</span>
+                            <span><i class="fas fa-comments"></i> 42 messages</span>
+                        </div>
+                        <button class="join-btn">Join Group</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-header">
+                        <div class="group-avatar">CH</div>
+                        <div class="group-info">
+                            <h3>Chemistry</h3>
+                            <p>6 members</p>
+                        </div>
+                    </div>
+                    <div class="group-details">
+                        <p>Organic chemistry study group preparing for lab finals.</p>
+                        <div class="members">
+                            <div class="member">ER</div>
+                            <div class="member">WL</div>
+                            <div class="member">KP</div>
+                            <div class="member">+3</div>
+                        </div>
+                        <div class="group-stats">
+                            <span><i class="fas fa-file-alt"></i> 32 resources</span>
+                            <span><i class="fas fa-comments"></i> 57 messages</span>
+                        </div>
+                        <button class="join-btn">Join Group</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>StudySync</h3>
+                <p>The ultimate platform for collaborative learning and group study sessions.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Testimonials</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Study Tips</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 StudySync. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
